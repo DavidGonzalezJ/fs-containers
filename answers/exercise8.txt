@@ -1,0 +1,84 @@
+docker container ls                         
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS              PORTS                                           NAMES
+18dd932b433c   nginx     "/docker-entrypoint.…"   7 minutes ago   Up 7 minutes        0.0.0.0:8080->80/tcp, [::]:8080->80/tcp         agitated_lewin
+d7a581327dd1   mongo     "docker-entrypoint.s…"   3 hours ago     Up About a minute   0.0.0.0:3456->27017/tcp, [::]:3456->27017/tcp   todo-backend-mongo-1
+   ~/Desktop/Prog Tests/fs-containers  main ≡  77ms   
+ 17:54:34  docker exec -it todo-backend-mongo-1 bash   
+root@d7a581327dd1:/# mongosh
+Current Mongosh Log ID: 6ab2a5428efe5aab3540879d
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.11.1
+Using MongoDB:          undefined
+Using Mongosh:          2.11.1
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+
+To help improve our products, pseudo-anonymous usage data is collected from interactive and agentic sessions only, and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+test> show dbs
+MongoServerError[Unauthorized]: Command listDatabases requires authentication
+test> 
+(To exit, press Ctrl+C again or Ctrl+D or type .exit)
+test> 
+root@d7a581327dd1:/# mongosh -u root -p example
+Current Mongosh Log ID: 6ab2a5985eef2a5fb1bb81d0
+Connecting to:          mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.11.1
+Using MongoDB:          8.3.11
+Using Mongosh:          2.11.1
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2026-09-22T15:53:17.067+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-09-22T15:53:17.067+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-09-22T15:53:17.067+00:00: We suggest setting the contents of sysfsFile to 0.
+   2026-09-22T15:53:17.067+00:00: We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.
+------
+
+test> show dbs
+admin         100.00 KiB
+config         72.00 KiB
+local          72.00 KiB
+the_database   56.00 KiB
+test> use the_database
+switched to db the_database
+the_database> show collections
+todos
+the_database> db.todos.find({})
+[
+  {
+    _id: ObjectId('6ab27affdd98ca5a198a80ab'),
+    text: 'Write code',
+    done: true
+  },
+  {
+    _id: ObjectId('6ab27affdd98ca5a198a80ac'),
+    text: 'Learn about containers',
+    done: true
+  }
+]
+the_database> db.todos.insertOne({text:"Increase the number of tools in my tool belt", done: false})
+{
+  acknowledged: true,
+  insertedId: ObjectId('6ab2a6da5eef2a5fb1bb81d1')
+}
+the_database> db.todos.find({})
+[
+  {
+    _id: ObjectId('6ab27affdd98ca5a198a80ab'),
+    text: 'Write code',
+    done: true
+  },
+  {
+    _id: ObjectId('6ab27affdd98ca5a198a80ac'),
+    text: 'Learn about containers',
+    done: true
+  },
+  {
+    _id: ObjectId('6ab2a6da5eef2a5fb1bb81d1'),
+    text: 'Increase the number of tools in my tool belt',
+    done: false
+  }
+]
