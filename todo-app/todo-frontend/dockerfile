@@ -9,10 +9,19 @@ RUN npm ci
 
 ENV VITE_BACKEND_URL=http://localhost:3000
 
+#Phase 2
+FROM build-stage AS test-stage
+
+RUN npm test
+
+
+#Phase 3
+FROM test-stage AS production-build
+
 RUN npm run build
 
-#Phase 2
+#Phase 4
 FROM nginx:1.29-alpine
 
 # COPY the directory dist from the build-stage to /usr/share/nginx/html
-COPY --from=build-stage /usr/src/app/dist /usr/share/nginx/html
+COPY --from=production-build /usr/src/app/dist /usr/share/nginx/html
