@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: ['app', 'localhost'],
     watch: {
       usePolling: true, // los eventos de archivos no llegan al contenedor desde Windows
     },
