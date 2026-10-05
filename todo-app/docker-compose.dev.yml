@@ -1,5 +1,5 @@
 services:
-  app:
+  app-frontend:
     image: hello-front-dev
     environment:
       - VITE_BACKEND_URL=http://localhost:3000
@@ -24,4 +24,43 @@ services:
       - 8080:80
     container_name: reverse-proxy
     depends_on:
-      - app # wait for the frontend container to be started
+      - app-frontend # wait for the frontend container to be started
+      - app-backend
+
+  app-backend:
+    image: todo-backend-dev
+    build:
+      context: ./todo-backend # The context will pick this directory as the "build context"
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./todo-backend:/usr/src/app
+      - /usr/src/app/node_modules # conserva el node_modules de Linux de la imagen
+    ports:
+      - 3000:3000
+    environment:
+      # Dentro de la red de compose se usa el nombre del servicio y el puerto interno
+      - MONGO_URL=mongodb://root:example@mongo:27017/the_database?authSource=admin
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo
+    ports:
+      - 3456:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: the_database
+    volumes:
+      - ./todo-backend/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ./todo-backend/mongo_data:/data/db
+      
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    command: ['redis-server', '--appendonly', 'yes'] # Overwrite the CMD
+    volumes: # Declare the volume
+      - ./todo-backend/redis_data:/data
