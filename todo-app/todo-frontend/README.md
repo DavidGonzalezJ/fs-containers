@@ -11,3 +11,7 @@ You can build static files for production release with `npm run build`
 ## Environment variables
 
 Use env VITE_BACKEND_URL to set where the backend for this application is
+
+## Full Stack Dockerized app repository
+
+https://github.com/DavidGonzalezJ/fullstack-text-summarizer
